@@ -525,6 +525,10 @@
             <button class="nav-btn primary" onclick="nextQuestion()">Câu sau ➡</button>
         </div>
 
+        <div style="max-width: 1200px; margin: 0 auto 1rem; padding: 0 1.5rem; color: var(--muted); font-weight: 600;">
+            👥 Người đang online: <span id="onlineCount">0</span>
+        </div>
+
         <script>
             let SIDEBAR_PAGE = 0;
             const SIDEBAR_SIZE = 50;
@@ -779,5 +783,42 @@
             }
         </script>
         <button class="open-sidebar" onclick="toggleSidebar()">📋 Câu hỏi</button>
+
+        <script type="module">
+            import { initializeApp } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-app.js";
+            import {
+                getDatabase,
+                ref,
+                set,
+                onValue,
+                onDisconnect,
+            } from "https://www.gstatic.com/firebasejs/12.8.0/firebase-database.js";
+
+            const firebaseConfig = {
+                apiKey: "AIzaSyAvUX94URWIom04aDsPSnKd97G1PLEcn1Y",
+                authDomain: "lsd270nttu.firebaseapp.com",
+                databaseURL: "https://lsd270nttu-default-rtdb.asia-southeast1.firebasedatabase.app",
+                projectId: "lsd270nttu",
+                storageBucket: "lsd270nttu.firebasestorage.app",
+                messagingSenderId: "43909484510",
+                appId: "1:43909484510:web:703fd6c6a25477a0eb574f",
+            };
+
+            const app = initializeApp(firebaseConfig);
+            const db = getDatabase(app);
+
+            const userId = Date.now() + "_" + Math.random().toString(36).slice(2);
+            const userRef = ref(db, "onlineUsers/" + userId);
+
+            set(userRef, true);
+            onDisconnect(userRef).remove();
+
+            const countRef = ref(db, "onlineUsers");
+            onValue(countRef, (snapshot) => {
+                const count = snapshot.exists() ? Object.keys(snapshot.val()).length : 0;
+                const el = document.getElementById("onlineCount");
+                if (el) el.innerText = count;
+            });
+        </script>
     </body>
 </html>
