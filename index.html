@@ -695,22 +695,21 @@
                 // Xóa đáp án
                 answers = {};
 
-                // Random lại câu hỏi
-                active = [...questions].sort(() => Math.random() - 0.5).slice(0, SESSION_SIZE);
+                // Reset trạng thái điều hướng
+                SIDEBAR_PAGE = 0;
+                idx = 0;
 
-                // Reset sidebar
-                const p = document.getElementById("palette");
-                p.innerHTML = "";
-                active.forEach((_, i) => {
-                    const b = document.createElement("button");
-                    b.className = "q-dot";
-                    b.textContent = i + 1;
-                    b.onclick = () => render(i);
-                    p.appendChild(b);
-                });
+                // Giữ đúng chế độ hiện tại (50 hay 270)
+                if (MODE === 270) {
+                    active = [...questions]; // toàn bộ 270 câu
+                } else {
+                    active = [...questions].sort(() => Math.random() - 0.5).slice(0, SESSION_SIZE); // 50 câu ngẫu nhiên
+                }
 
                 document.getElementById("score").textContent = "Đúng 0";
+                document.getElementById("progress-text").textContent = `Câu 1 / ${active.length}`;
 
+                buildPalette();
                 render(0);
             }
             function toggleSidebar() {
