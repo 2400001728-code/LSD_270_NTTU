@@ -52,9 +52,22 @@
                 --bg: #f1f5f9;
                 --card: #ffffff;
                 --text: #0f172a;
-                --muted: #64748b;
+                --muted: #4b5563;
                 --border: #e2e8f0;
                 --shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            }
+
+            /* Dark theme variables */
+            .dark {
+                --primary: #7aa8ff;
+                --success: #34d399;
+                --danger: #fca5a5;
+                --bg: #0b1220;
+                --card: #0f172a;
+                --text: #e5e7eb;
+                --muted: #cbd5e1;
+                --border: #1f2937;
+                --shadow: 0 10px 25px rgba(0, 0, 0, 0.45);
             }
 
             body {
@@ -122,6 +135,17 @@
                 background: #ecfeff;
                 color: #155e75;
                 border: 2px solid #06b6d4;
+            }
+
+            /* Nút theme */
+            .btn.theme {
+                background: #0f172a;
+                color: #e2e8f0;
+                border: 2px solid #1e293b;
+            }
+
+            .btn.theme:hover {
+                background: #1e293b;
             }
 
             .btn.mode:hover {
@@ -222,7 +246,7 @@
                 align-items: flex-start;
                 gap: 0.75rem;
                 transition: 0.2s;
-                background: #fff;
+                background: var(--card);
             }
 
             @media (max-width: 600px) {
@@ -238,13 +262,13 @@
 
             .option:hover {
                 border-color: var(--primary);
-                background: #eff6ff;
+                background: color-mix(in srgb, var(--primary) 10%, var(--card));
             }
 
             .option b {
                 width: 28px;
                 height: 28px;
-                background: #e2e8f0;
+                background: var(--border);
                 border-radius: 8px;
                 display: flex;
                 align-items: center;
@@ -303,7 +327,7 @@
                 height: 42px;
                 border-radius: 12px;
                 border: 2px solid var(--border);
-                background: #fff;
+                background: var(--card);
                 cursor: pointer;
                 font-weight: 700;
                 color: var(--text);
@@ -313,7 +337,7 @@
             /* Hover */
             .q-dot:hover {
                 border-color: var(--primary);
-                background: #eff6ff;
+                background: color-mix(in srgb, var(--primary) 10%, var(--card));
             }
 
             /* Đang làm */
@@ -392,7 +416,7 @@
                 padding: 0.55rem 1.1rem;
                 border-radius: 999px;
                 border: 2px solid var(--border);
-                background: #fff;
+                background: var(--card);
                 cursor: pointer;
                 font-weight: 700;
                 color: var(--text);
@@ -401,7 +425,7 @@
 
             .nav-btn:hover {
                 border-color: var(--primary);
-                background: #eff6ff;
+                background: color-mix(in srgb, var(--primary) 10%, var(--card));
             }
 
             /* Nút chính */
@@ -460,6 +484,7 @@
             <div class="header-actions">
                 <button class="btn start" onclick="start()">▶ Bắt đầu (50)</button>
                 <button class="btn mode" onclick="toggleMode()">🧠 Làm 270 câu</button>
+                <button class="btn theme" onclick="toggleTheme()" id="theme-btn">🌙 Dark</button>
                 <button class="btn reset" onclick="resetQuiz()">🔄 Làm lại</button>
             </div>
         </header>
@@ -494,6 +519,8 @@
             const SIDEBAR_SIZE = 50;
             const SESSION_SIZE = 50;
             let MODE = 50;
+            let THEME = "light";
+            const THEME_KEY = "quiz-theme";
             let questions = [],
                 answers = {},
                 correctKey = {},
@@ -515,6 +542,13 @@
                         correctKey[q.number] = q.answer;
                     });
                 });
+
+            // THEME
+            const savedTheme = localStorage.getItem(THEME_KEY);
+            if (savedTheme) {
+                THEME = savedTheme;
+                applyTheme();
+            }
 
             function start() {
                 answers = {};
@@ -714,6 +748,23 @@
             }
             function toggleSidebar() {
                 document.querySelector(".sidebar").classList.toggle("show");
+            }
+
+            function applyTheme() {
+                const root = document.documentElement;
+                if (THEME === "dark") {
+                    root.classList.add("dark");
+                    document.getElementById("theme-btn").textContent = "☀ Light";
+                } else {
+                    root.classList.remove("dark");
+                    document.getElementById("theme-btn").textContent = "🌙 Dark";
+                }
+                localStorage.setItem(THEME_KEY, THEME);
+            }
+
+            function toggleTheme() {
+                THEME = THEME === "dark" ? "light" : "dark";
+                applyTheme();
             }
         </script>
         <button class="open-sidebar" onclick="toggleSidebar()">📋 Câu hỏi</button>
